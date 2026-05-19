@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}International Schools by District in Hanoi — Location Guide 2026{% endblock %}
+{% block description %}Which international schools are in each Hanoi district? Tay Ho, Long Bien, Nam Tu Liem, Ha Dong, Dong Da — commute times, expat neighbourhoods, and which school is nearest.{% endblock %}
+
+{% block content %}
+<header class="hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <div class="hero-content">
+      <h1>Schools by district — where to live and which schools are nearby</h1>
+      <p>Hanoi has {{ by_district | length }} distinct school districts. Here's how to choose where to live based on your shortlisted schools.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> › <a href="/hanoi/guides/">Guides</a> › <span>Schools by district</span></div>
+
+    <div class="info-box" style="margin:1rem 0 2rem;">
+      <strong>Key insight:</strong> Tay Ho (West Lake) is the most popular expat district — it has the highest concentration of international schools and the largest expat community. Long Bien suits families who prefer a quieter, more suburban environment. Nam Tu Liem is growing fast with several newer schools.
+    </div>
+
+    {% set district_notes = {
+      "Tay Ho": "The heart of Hanoi's expat community. West Lake area has restaurants, cafés, international supermarkets, and many families from UNIS, SIS Ciputra, Rugby School, and others. Traffic to the city centre can be slow in rush hour.",
+      "Long Bien": "Quieter, more suburban. Vinhomes Riverside is a popular gated community for families at BIS and SIS Van Phuc. Good access to the ring roads. Less vibrant expat scene than Tay Ho.",
+      "Nam Tu Liem": "Fast-developing western district. Home to Brighton College and Hanoi Academy. Good road connections and newer housing developments. Growing expat community.",
+      "Ha Dong": "Southern district — increasingly popular with families at Gamuda Gardens schools (SIS, Reigate Grammar). Green residential estates but far from Tay Ho (30–40 min).",
+      "Dong Da": "Central district with good transport links. HIS and Lycée Yersin are here. Old Quarter proximity is convenient for families without children in the north.",
+      "Cau Giay": "Business and university district. Good central-west location. GIS and Dwight are here. Convenient for families working in the My Dinh or Cau Giay office areas.",
+      "Dong Anh": "North of the Red River — developing area. TH School is here. Commute from central Hanoi is 30–40 minutes. Quieter, more spacious than central districts.",
+      "Hung Yen": "Province south-east of Hanoi. Uppingham is here — primarily a boarding school. Long commute from central Hanoi makes day attendance impractical for most families.",
+      "Ba Dinh": "Historic central district near the Old Quarter. VAS Hanoi is here. Good central location for families working in the diplomatic quarter or Ba Dinh area.",
+    } %}
+
+    {% for district, schools in by_district.items() | sort %}
+    <section class="section">
+      <h2 class="section-title" style="display:flex; align-items:center; gap:.75rem;">
+        {{ district }}
+        <span class="badge badge-blue">{{ schools | length }} school{% if schools|length != 1 %}s{% endif %}</span>
+      </h2>
+      {% if district in district_notes %}
+      <p style="color:var(--gray-600); margin-bottom:1.25rem; font-size:.95rem;">{{ district_notes[district] }}</p>
+      {% endif %}
+      <div class="grid grid-3">
+        {% for school in schools %}
+        <a href="/hanoi/schools/{{ school.slug }}" style="text-decoration:none; color:inherit;">
+          <article class="card">
+            <img class="card-img" src="{{ school.image_url }}" alt="{{ school.name }}" style="height:130px;" />
+            <div class="card-body">
+              <h3 style="font-size:.95rem;">{{ school.name }}</h3>
+              <div class="card-meta">
+                <span>{{ school.curriculum.split('/')[0].strip() }}</span>
+                <span>Ages {{ school.age_range }}</span>
+              </div>
+              <p class="card-summary" style="font-size:.82rem;">{{ school.tuition_range }}</p>
+            </div>
+          </article>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+
+    <section class="section">
+      <h2 class="section-title">How far is each district from the main expat areas?</h2>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead><tr><th class="row-label">From → To</th><th>Tay Ho</th><th>Long Bien</th><th>Dong Da / Hoan Kiem</th><th>Ha Dong</th><th>Nam Tu Liem</th></tr></thead>
+          <tbody>
+            <tr><td>Tay Ho</td><td>—</td><td>20–30 min</td><td>15–25 min</td><td>35–50 min</td><td>20–30 min</td></tr>
+            <tr><td>Long Bien</td><td>20–30 min</td><td>—</td><td>15–20 min</td><td>40–55 min</td><td>35–45 min</td></tr>
+            <tr><td>Cau Giay</td><td>20–30 min</td><td>30–40 min</td><td>15–25 min</td><td>20–30 min</td><td>10–15 min</td></tr>
+            <tr><td>Ha Dong / Gamuda</td><td>35–50 min</td><td>40–55 min</td><td>25–35 min</td><td>—</td><td>20–30 min</td></tr>
+            <tr><td>Dong Anh</td><td>25–35 min</td><td>30–40 min</td><td>25–35 min</td><td>55–70 min</td><td>35–45 min</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.8rem; color:var(--gray-400); margin-top:.5rem;">Approximate driving times in normal traffic. Rush hour (7–9am, 5–7pm) can add 50–100% to these estimates.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Frequently asked questions about Hanoi school districts</h2>
+      <div class="faq-item"><details><summary>Which district is best for expat families in Hanoi?</summary>
+      <p>Tay Ho (West Lake) is the most popular expat district — it has the largest expat community, the most international restaurants and services, and the highest concentration of international schools. Long Bien (especially Vinhomes Riverside) is the second most popular for families who prefer a quieter, more suburban environment.</p>
+      </details></div>
+      <div class="faq-item"><details><summary>Should I choose my apartment based on the school location or vice versa?</summary>
+      <p>Generally, choose the school first. The school is the bigger long-term commitment and the harder thing to change. Most Hanoi expat districts have good housing options, so you can usually find a suitable apartment near your preferred school.</p>
+      </details></div>
+      <div class="faq-item"><details><summary>How bad is the traffic in Hanoi for the school run?</summary>
+      <p>Rush hour traffic (7–9am, 5–7pm) in Hanoi can be severe, especially on routes between Tay Ho and Long Bien, or crossing the Red River bridges. If your child uses the school bus, the bus route is designed to account for this. For car or motorbike pickup, budget an extra 30–50% on journey times during rush hour.</p>
+      </details></div>
+      <div class="faq-item"><details><summary>Are there international schools in the Ha Dong or southern districts?</summary>
+      <p>Yes — SIS Gamuda Gardens, Reigate Grammar School Vietnam, and ParkCity International School are all in the Ha Dong / Gamuda area. These suit families living in the south of the city.</p>
+      </details></div>
+    </section>
+
+  </div>
+</main>
+{% endblock %}

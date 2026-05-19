@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login — Hanoi Schools Review</title>
+  <link rel="stylesheet" href="/static/styles.css"/>
+  <style>
+    .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--gray-100); }
+    .login-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-hover); padding: 2.5rem; width: 100%; max-width: 380px; }
+    .login-card h1 { font-size: 1.3rem; color: var(--navy); margin-bottom: .25rem; }
+    .login-card p  { font-size: .88rem; color: var(--gray-400); margin-bottom: 1.75rem; }
+    .field { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1rem; }
+    .field label { font-size: .82rem; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: .04em; }
+    .field input { padding: .6rem .8rem; border: 1.5px solid var(--gray-200); border-radius: .4rem; font-size: .95rem; }
+    .field input:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(15,76,129,.1); }
+    .error-box { background: var(--red-l); color: #991b1b; padding: .7rem 1rem; border-radius: .4rem; font-size: .88rem; margin-bottom: 1rem; }
+    .submit-btn { width: 100%; padding: .7rem; background: var(--navy); color: var(--white); border: 0; border-radius: var(--radius); font-size: 1rem; font-weight: 600; cursor: pointer; }
+    .submit-btn:hover { background: var(--navy-d); }
+  </style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <h1>Admin Login</h1>
+    <p>Hanoi International Schools Review — Admin Panel</p>
+
+    {% if error %}
+    <div class="error-box">Incorrect username or password. Please try again.</div>
+    {% endif %}
+
+    <form method="post" action="/admin/login">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required autofocus />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button class="submit-btn" type="submit">Sign in</button>
+    </form>
+
+    <p style="margin-top:1.25rem; font-size:.8rem; color:var(--gray-400); text-align:center;">
+      Default credentials: <code>admin</code> / <code>changeme</code><br/>
+      Set <code>ADMIN_USERNAME</code> and <code>ADMIN_PASSWORD</code> env vars in production.
+    </p>
+  </div>
+</div>
+</body>
+</html>

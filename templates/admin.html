@@ -1,10 +1,18 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin — Hanoi Schools Review</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/styles.css"/>
+  <style>
+    .tab-nav { display:flex; gap:.5rem; margin-bottom:1.5rem; border-bottom:2px solid var(--gray-200); padding-bottom:0; }
+    .tab-btn { padding:.55rem 1rem; font-size:.9rem; font-weight:600; color:var(--gray-600); border:0; background:none; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; }
+    .tab-btn.active { color:var(--navy); border-bottom-color:var(--navy); }
+    .tab-pane { display:none; }
+    .tab-pane.active { display:block; }
+    .confidence-bar { display:inline-block; height:8px; border-radius:4px; background:var(--green); vertical-align:middle; }
+  </style>
 </head>
 <body>
 <nav class="site-nav">
@@ -15,96 +23,140 @@
       <li><a href="/hanoi/schools/">Schools</a></li>
       <li><a href="/hanoi/promotions/">Promotions</a></li>
     </ul>
-    <div class="nav-cta" style="margin-left:auto;">
-      <span style="font-size:.82rem; color:var(--gray-400);">Admin dashboard</span>
+    <div style="margin-left:auto; display:flex; align-items:center; gap:1rem;">
+      <span style="font-size:.82rem; color:var(--gray-400);">Admin</span>
+      <a class="btn btn-outline btn-sm" href="/admin/logout">Sign out</a>
     </div>
   </div>
 </nav>
 
 <main class="container" style="padding-bottom:4rem;">
 
-  <h1 style="font-size:1.6rem; font-weight:700; color:var(--navy); margin:1.5rem 0 .25rem;">Offer moderation dashboard</h1>
-  <p style="color:var(--gray-600); margin-bottom:2rem;">Review offers and mark as school-confirmed. Deactivate expired or incorrect offers.</p>
-
-  <!-- Offer table -->
-  <h2 style="font-size:1.1rem; font-weight:600; margin-bottom:.75rem;">Active & pending offers</h2>
-  <div class="admin-table-wrap" style="margin-bottom:3rem;">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>School</th>
-          <th>Type</th>
-          <th>Status</th>
-          <th>Deadline</th>
-          <th>Active</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for offer in offers %}
-        <tr>
-          <td style="max-width:200px;">{{ offer.title }}</td>
-          <td>{{ school_map.get(offer.school_id).name if school_map.get(offer.school_id) else '—' }}</td>
-          <td><span class="badge badge-gray">{{ offer.offer_type }}</span></td>
-          <td>
-            {% if offer.verification_status == 'School-confirmed' %}
-              <span class="badge badge-green">✓ School-confirmed</span>
-            {% elif offer.verification_status == 'Source-verified' %}
-              <span class="badge badge-blue">◎ Source-verified</span>
-            {% else %}
-              <span class="badge badge-amber">Self-reported</span>
-            {% endif %}
-          </td>
-          <td>{{ offer.deadline }}</td>
-          <td>
-            {% if offer.active %}
-              <span class="badge badge-green">Active</span>
-            {% else %}
-              <span class="badge badge-red">Inactive</span>
-            {% endif %}
-          </td>
-          <td style="white-space:nowrap;">
-            <form method="post" action="/admin/offers/{{ offer.id }}/verify" style="display:inline;">
-              <button class="btn btn-primary btn-sm" type="submit">Verify</button>
-            </form>
-            <form method="post" action="/admin/offers/{{ offer.id }}/deactivate" style="display:inline; margin-left:.35rem;">
-              <button class="btn btn-danger btn-sm" type="submit">Deactivate</button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin:1.5rem 0 1rem; flex-wrap:wrap; gap:.75rem;">
+    <h1 style="font-size:1.5rem; font-weight:700; color:var(--navy);">Admin Dashboard</h1>
+    <form method="post" action="/admin/scraper/run" style="display:inline;">
+      <button class="btn btn-outline btn-sm" type="submit">▶ Run scraper now</button>
+    </form>
   </div>
 
-  <!-- Recent leads -->
-  <h2 style="font-size:1.1rem; font-weight:600; margin-bottom:.75rem;">Recent leads (last 20)</h2>
-  <div class="admin-table-wrap">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Child age</th>
-          <th>Captured</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for lead in leads %}
-        <tr>
-          <td>{{ lead.name }}</td>
-          <td>{{ lead.email }}</td>
-          <td>{{ lead.child_age }}</td>
-          <td style="color:var(--gray-400); font-size:.83rem;">{{ lead.created_at.strftime('%d %b %Y %H:%M') }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="4" style="color:var(--gray-400); text-align:center; padding:1.5rem;">No leads yet.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  {% if request.query_params.get('scraped') %}
+  <div class="success-banner" style="margin-bottom:1rem;">Scraper started in background. Pending offers will appear below once complete.</div>
+  {% endif %}
+
+  <!-- Summary stats -->
+  <div class="grid grid-4" style="margin-bottom:1.5rem;">
+    <div class="fact-item"><div class="fact-label">Total schools</div><div class="fact-value">{{ school_map|length }}</div></div>
+    <div class="fact-item"><div class="fact-label">Active offers</div><div class="fact-value">{{ offers | selectattr('active') | list | length }}</div></div>
+    <div class="fact-item"><div class="fact-label">Pending review</div><div class="fact-value" style="color:var(--amber);">{{ pending | length }}</div></div>
+    <div class="fact-item"><div class="fact-label">Total leads</div><div class="fact-value">{{ leads | length }}</div></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('offers')">Offers ({{ offers|length }})</button>
+    <button class="tab-btn" onclick="showTab('pending')">Scraper queue ({{ pending|length }})</button>
+    <button class="tab-btn" onclick="showTab('leads')">Leads ({{ leads|length }})</button>
+  </div>
+
+  <!-- Offers tab -->
+  <div id="tab-offers" class="tab-pane active">
+    <div class="admin-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Title</th><th>School</th><th>Type</th><th>Status</th><th>Deadline</th><th>Active</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for offer in offers %}
+          <tr>
+            <td style="max-width:220px; font-size:.85rem;">{{ offer.title }}</td>
+            <td style="font-size:.82rem;">{{ school_map.get(offer.school_id).name if school_map.get(offer.school_id) else '—' }}</td>
+            <td><span class="badge badge-gray">{{ offer.offer_type }}</span></td>
+            <td>
+              {% if offer.verification_status == 'School-confirmed' %}<span class="badge badge-green">✓ Confirmed</span>
+              {% elif offer.verification_status == 'Source-verified' %}<span class="badge badge-blue">◎ Source-verified</span>
+              {% else %}<span class="badge badge-amber">Self-reported</span>{% endif %}
+            </td>
+            <td style="font-size:.82rem;">{{ offer.deadline }}</td>
+            <td>{% if offer.active %}<span class="badge badge-green">Active</span>{% else %}<span class="badge badge-red">Inactive</span>{% endif %}</td>
+            <td style="white-space:nowrap;">
+              <form method="post" action="/admin/offers/{{ offer.id }}/verify" style="display:inline;">
+                <button class="btn btn-primary btn-sm" type="submit">Verify</button>
+              </form>
+              <form method="post" action="/admin/offers/{{ offer.id }}/deactivate" style="display:inline; margin-left:.3rem;">
+                <button class="btn btn-danger btn-sm" type="submit">Deactivate</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Scraper queue tab -->
+  <div id="tab-pending" class="tab-pane">
+    {% if not pending %}
+    <div class="info-box">No pending items. Run the scraper to discover new offers from school websites.</div>
+    {% else %}
+    <div class="admin-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Title</th><th>School</th><th>Type</th><th>Confidence</th><th>Source</th><th>Extracted text</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for item in pending %}
+          <tr>
+            <td style="max-width:180px; font-size:.85rem;">{{ item.title }}</td>
+            <td style="font-size:.82rem;">{{ school_map.get(item.school_id).name if school_map.get(item.school_id) else '—' }}</td>
+            <td><span class="badge badge-gray">{{ item.offer_type }}</span></td>
+            <td>
+              <span class="confidence-bar" style="width:{{ (item.confidence * 60)|int }}px; background:{% if item.confidence > 0.6 %}var(--green){% elif item.confidence > 0.35 %}var(--amber){% else %}var(--red){% endif %};"></span>
+              <span style="font-size:.8rem; margin-left:.4rem;">{{ (item.confidence * 100)|int }}%</span>
+            </td>
+            <td style="font-size:.78rem;"><a href="{{ item.source_url }}" target="_blank" rel="noopener">Source →</a></td>
+            <td style="max-width:200px; font-size:.8rem; color:var(--gray-600);">{{ item.raw_text[:120] }}…</td>
+            <td style="white-space:nowrap;">
+              <form method="post" action="/admin/pending/{{ item.id }}/approve" style="display:inline;">
+                <button class="btn btn-primary btn-sm" type="submit">Approve</button>
+              </form>
+              <form method="post" action="/admin/pending/{{ item.id }}/reject" style="display:inline; margin-left:.3rem;">
+                <button class="btn btn-danger btn-sm" type="submit">Reject</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Leads tab -->
+  <div id="tab-leads" class="tab-pane">
+    <div class="admin-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Child age</th><th>Captured</th></tr></thead>
+        <tbody>
+          {% for lead in leads %}
+          <tr>
+            <td>{{ lead.name }}</td>
+            <td>{{ lead.email }}</td>
+            <td>{{ lead.child_age }}</td>
+            <td style="color:var(--gray-400); font-size:.82rem;">{{ lead.created_at.strftime('%d %b %Y %H:%M') }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" style="text-align:center; color:var(--gray-400); padding:1.5rem;">No leads yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
 </main>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
 </body>
 </html>
