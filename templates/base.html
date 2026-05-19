@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Hanoi International Schools Review{% endblock %}</title>
+  <meta name="description" content="{% block description %}Compare Hanoi international schools and discover verified scholarships, waivers, and discounts for 2026.{% endblock %}" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="container">
+    <a class="nav-brand" href="/">Hanoi Schools <span>Review</span></a>
+    <ul class="nav-links">
+      <li><a href="/hanoi/schools/" {% if active_page == 'schools' %}class="active"{% endif %}>Schools</a></li>
+      <li><a href="/hanoi/promotions/" {% if active_page == 'promotions' %}class="active"{% endif %}>Promotions & Scholarships</a></li>
+      <li><a href="/hanoi/compare/" {% if active_page == 'compare' %}class="active"{% endif %}>Compare</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="btn btn-primary btn-sm" href="/#lead">Get free guide</a>
+    </div>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Hanoi Schools <span>Review</span></div>
+        <p class="footer-tagline">The trusted resource for parents choosing an international school in Hanoi. Verified offers, unbiased comparisons, and expert guides.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Discover</h4>
+        <ul>
+          <li><a href="/hanoi/schools/">School Directory</a></li>
+          <li><a href="/hanoi/promotions/">Active Promotions</a></li>
+          <li><a href="/hanoi/compare/">Compare Schools</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Schools</h4>
+        <ul>
+          <li><a href="/hanoi/schools/unis-hanoi">UNIS Hanoi</a></li>
+          <li><a href="/hanoi/schools/bis-hanoi">BIS Hanoi</a></li>
+          <li><a href="/hanoi/schools/concordia-hanoi">Concordia</a></li>
+          <li><a href="/hanoi/schools/hanoi-international-school">HIS</a></li>
+          <li><a href="/hanoi/schools/lycee-francais-hanoi">Lycée Yersin</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/#lead">Free Schools Guide</a></li>
+          <li><a href="/#faqs">Parent FAQs</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {{ year }} Hanoi International Schools Review. For informational purposes only.</span>
+      <span>Offers verified regularly — always confirm directly with schools.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

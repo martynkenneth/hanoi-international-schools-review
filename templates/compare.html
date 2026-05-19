@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Compare International Schools in Hanoi — Side-by-Side 2026{% endblock %}
+{% block description %}Compare up to 4 international schools in Hanoi side-by-side. Tuition, curriculum, class size, accreditation, facilities, and more.{% endblock %}
+
+{% block content %}
+
+<header class="hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <div class="hero-content">
+      <h1>Compare Hanoi International Schools</h1>
+      <p>Select up to 4 schools for a side-by-side comparison of fees, curriculum, and key facts.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="/">Home</a> › <span>Compare Schools</span>
+    </div>
+
+    <!-- School selector -->
+    <form method="get" action="/hanoi/compare/" class="compare-selector">
+      {% for i in range(4) %}
+      <div>
+        <label for="school_{{ i }}">School {{ i + 1 }}</label>
+        <select name="s{{ i }}" id="school_{{ i }}" onchange="this.form.submit()">
+          <option value="">— Select a school —</option>
+          {% for school in all_schools %}
+          {% set slug_list = selected_slugs.split(',') if selected_slugs else [] %}
+          <option value="{{ school.slug }}"
+            {% if i < slug_list|length and slug_list[i].strip() == school.slug %}selected{% endif %}>
+            {{ school.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endfor %}
+      <button class="btn btn-primary btn-sm" type="submit" style="align-self:flex-end;">Compare</button>
+    </form>
+
+    {% if not compared %}
+    <div class="info-box" style="margin-bottom:2rem;">
+      Select at least 2 schools above to start comparing. You can compare up to 4 schools at once.
+    </div>
+
+    <!-- Show all schools as starting point -->
+    <h2 class="section-title">All schools</h2>
+    <div class="grid grid-3" style="margin-bottom:3rem;">
+      {% for school in all_schools %}
+      <a href="/hanoi/compare/?schools={{ school.slug }}" style="text-decoration:none; color:inherit;">
+        <article class="card">
+          <img class="card-img" src="{{ school.image_url }}" alt="{{ school.name }}" />
+          <div class="card-body">
+            <h3>{{ school.name }}</h3>
+            <div class="card-meta">
+              <span>{{ school.curriculum.split('/')[0].strip() }}</span>
+              <span>{{ school.district }}</span>
+            </div>
+            <p class="card-summary">{{ school.tuition_range }}</p>
+            <span class="btn btn-outline btn-sm">Start comparison →</span>
+          </div>
+        </article>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% else %}
+
+    <!-- Comparison table -->
+    <div class="compare-table-wrap" style="margin-bottom:3rem;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th class="row-label">Feature</th>
+            {% for school in compared %}
+            <th>
+              <a href="/hanoi/schools/{{ school.slug }}" style="color:var(--white);">{{ school.name }}</a>
+            </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Curriculum</td>
+            {% for school in compared %}<td>{{ school.curriculum }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>Annual tuition</td>
+            {% for school in compared %}<td><strong>{{ school.tuition_range }}</strong></td>{% endfor %}
+          </tr>
+          <tr>
+            <td>Age range</td>
+            {% for school in compared %}<td>{{ school.age_range }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>District</td>
+            {% for school in compared %}<td>{{ school.district }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>Language</td>
+            {% for school in compared %}<td>{{ school.language_of_instruction or "—" }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>Founded</td>
+            {% for school in compared %}<td>{{ school.founded_year or "—" }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>Total students</td>
+            {% for school in compared %}<td>{{ school.total_students or "—" }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>Max class size</td>
+            {% for school in compared %}<td>{{ school.class_size_max or "—" }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>Accreditation</td>
+            {% for school in compared %}<td style="font-size:.83rem;">{{ school.accreditation or "—" }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>University pathways</td>
+            {% for school in compared %}<td style="font-size:.85rem;">{{ school.university_pathways or "—" }}</td>{% endfor %}
+          </tr>
+          <tr>
+            <td>School website</td>
+            {% for school in compared %}
+            <td>
+              {% if school.website_url %}
+              <a href="{{ school.website_url }}" target="_blank" rel="noopener" style="font-size:.85rem;">Official site →</a>
+              {% else %}—{% endif %}
+            </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td>Full profile</td>
+            {% for school in compared %}
+            <td><a href="/hanoi/schools/{{ school.slug }}" class="btn btn-outline btn-sm">View →</a></td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Shareable link -->
+    <div class="info-box" style="margin-bottom:2rem;">
+      <strong>Share this comparison:</strong>
+      <span id="share-url" style="font-family:monospace; font-size:.85rem; margin-left:.5rem;"></span>
+      <script>document.getElementById('share-url').textContent = window.location.href;</script>
+    </div>
+
+    {% endif %}
+
+  </div>
+</main>
+
+
+{% endblock %}

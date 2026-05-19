@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Hanoi Schools Review</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+<nav class="site-nav">
+  <div class="container">
+    <a class="nav-brand" href="/">Hanoi Schools <span>Review</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Site</a></li>
+      <li><a href="/hanoi/schools/">Schools</a></li>
+      <li><a href="/hanoi/promotions/">Promotions</a></li>
+    </ul>
+    <div class="nav-cta" style="margin-left:auto;">
+      <span style="font-size:.82rem; color:var(--gray-400);">Admin dashboard</span>
+    </div>
+  </div>
+</nav>
+
+<main class="container" style="padding-bottom:4rem;">
+
+  <h1 style="font-size:1.6rem; font-weight:700; color:var(--navy); margin:1.5rem 0 .25rem;">Offer moderation dashboard</h1>
+  <p style="color:var(--gray-600); margin-bottom:2rem;">Review offers and mark as school-confirmed. Deactivate expired or incorrect offers.</p>
+
+  <!-- Offer table -->
+  <h2 style="font-size:1.1rem; font-weight:600; margin-bottom:.75rem;">Active & pending offers</h2>
+  <div class="admin-table-wrap" style="margin-bottom:3rem;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>School</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Deadline</th>
+          <th>Active</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for offer in offers %}
+        <tr>
+          <td style="max-width:200px;">{{ offer.title }}</td>
+          <td>{{ school_map.get(offer.school_id).name if school_map.get(offer.school_id) else '—' }}</td>
+          <td><span class="badge badge-gray">{{ offer.offer_type }}</span></td>
+          <td>
+            {% if offer.verification_status == 'School-confirmed' %}
+              <span class="badge badge-green">✓ School-confirmed</span>
+            {% elif offer.verification_status == 'Source-verified' %}
+              <span class="badge badge-blue">◎ Source-verified</span>
+            {% else %}
+              <span class="badge badge-amber">Self-reported</span>
+            {% endif %}
+          </td>
+          <td>{{ offer.deadline }}</td>
+          <td>
+            {% if offer.active %}
+              <span class="badge badge-green">Active</span>
+            {% else %}
+              <span class="badge badge-red">Inactive</span>
+            {% endif %}
+          </td>
+          <td style="white-space:nowrap;">
+            <form method="post" action="/admin/offers/{{ offer.id }}/verify" style="display:inline;">
+              <button class="btn btn-primary btn-sm" type="submit">Verify</button>
+            </form>
+            <form method="post" action="/admin/offers/{{ offer.id }}/deactivate" style="display:inline; margin-left:.35rem;">
+              <button class="btn btn-danger btn-sm" type="submit">Deactivate</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Recent leads -->
+  <h2 style="font-size:1.1rem; font-weight:600; margin-bottom:.75rem;">Recent leads (last 20)</h2>
+  <div class="admin-table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Child age</th>
+          <th>Captured</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads %}
+        <tr>
+          <td>{{ lead.name }}</td>
+          <td>{{ lead.email }}</td>
+          <td>{{ lead.child_age }}</td>
+          <td style="color:var(--gray-400); font-size:.83rem;">{{ lead.created_at.strftime('%d %b %Y %H:%M') }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="color:var(--gray-400); text-align:center; padding:1.5rem;">No leads yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</body>
+</html>

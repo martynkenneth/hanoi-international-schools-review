@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}International Schools in Hanoi — Parent Guide 2026{% endblock %}
+{% block description %}Everything parents need to choose an international school in Hanoi. School directory, verified scholarships, and side-by-side comparisons.{% endblock %}
+
+{% block content %}
+
+<header class="hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <div class="hero-content">
+      <h1>International Schools in Hanoi</h1>
+      <p>Your complete guide to choosing the right school for your child in 2026.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/hanoi/schools/">Browse schools</a>
+        <a class="btn btn-secondary" href="/hanoi/promotions/">Active scholarships</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> › <span>Hanoi</span></div>
+
+    <section class="section">
+      <h2 class="section-title">Quick links</h2>
+      <div class="grid grid-3">
+        <a href="/hanoi/schools/" style="text-decoration:none;">
+          <div class="card" style="padding:1.5rem; text-align:center;">
+            <div style="font-size:2rem; margin-bottom:.5rem;">🏫</div>
+            <h3>School Directory</h3>
+            <p style="font-size:.9rem; color:var(--gray-600);">{{ schools|length }} schools with full profiles, fees, and admissions info.</p>
+          </div>
+        </a>
+        <a href="/hanoi/promotions/" style="text-decoration:none;">
+          <div class="card" style="padding:1.5rem; text-align:center;">
+            <div style="font-size:2rem; margin-bottom:.5rem;">🎓</div>
+            <h3>Promotions & Scholarships</h3>
+            <p style="font-size:.9rem; color:var(--gray-600);">{{ offers|length }} active verified offers from Hanoi schools.</p>
+          </div>
+        </a>
+        <a href="/hanoi/compare/" style="text-decoration:none;">
+          <div class="card" style="padding:1.5rem; text-align:center;">
+            <div style="font-size:2rem; margin-bottom:.5rem;">⚖️</div>
+            <h3>Compare Schools</h3>
+            <p style="font-size:.9rem; color:var(--gray-600);">Side-by-side comparison of up to 4 schools.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+{% endblock %}

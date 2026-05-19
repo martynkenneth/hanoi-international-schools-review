@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}{{ school.name }} — Review, Fees & Scholarships 2026{% endblock %}
+{% block description %}Honest review of {{ school.name }} in Hanoi. Curriculum: {{ school.curriculum }}. Tuition: {{ school.tuition_range }}. Verified scholarships, admissions timeline, and parent pros/cons.{% endblock %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "{{ school.name }}",
+  "description": "{{ school.summary }}",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Hanoi",
+    "addressCountry": "VN",
+    "streetAddress": "{{ school.address }}"
+  },
+  "url": "{{ school.website_url }}",
+  "foundingDate": "{{ school.founded_year }}"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for q, a in faqs %}
+    {
+      "@type": "Question",
+      "name": "{{ q }}",
+      "acceptedAnswer": { "@type": "Answer", "text": "{{ a }}" }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero image -->
+<div class="school-hero">
+  <img src="{{ school.image_url }}" alt="{{ school.name }} campus photo" />
+  <div class="school-hero-overlay">
+    <div>
+      <h1>{{ school.name }}</h1>
+      <div class="school-meta-chips">
+        <span class="chip">{{ school.curriculum }}</span>
+        <span class="chip">{{ school.district }}</span>
+        <span class="chip">Ages {{ school.age_range }}</span>
+        {% if school.language_of_instruction %}<span class="chip">{{ school.language_of_instruction }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="/">Home</a> › <a href="/hanoi/schools/">Schools</a> › <span>{{ school.name }}</span>
+    </div>
+
+    <!-- Quick facts grid -->
+    <div class="school-quick-facts">
+      <div class="fact-item">
+        <div class="fact-label">Tuition range</div>
+        <div class="fact-value">{{ school.tuition_range }}</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-label">Curriculum</div>
+        <div class="fact-value">{{ school.curriculum.split('/')[0].strip() }}</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-label">Ages</div>
+        <div class="fact-value">{{ school.age_range }}</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-label">District</div>
+        <div class="fact-value">{{ school.district }}</div>
+      </div>
+      {% if school.founded_year %}
+      <div class="fact-item">
+        <div class="fact-label">Founded</div>
+        <div class="fact-value">{{ school.founded_year }}</div>
+      </div>
+      {% endif %}
+      {% if school.total_students %}
+      <div class="fact-item">
+        <div class="fact-label">Students</div>
+        <div class="fact-value">{{ school.total_students }}</div>
+      </div>
+      {% endif %}
+      {% if school.class_size_max %}
+      <div class="fact-item">
+        <div class="fact-label">Max class size</div>
+        <div class="fact-value">{{ school.class_size_max }}</div>
+      </div>
+      {% endif %}
+      {% if school.accreditation %}
+      <div class="fact-item">
+        <div class="fact-label">Accreditation</div>
+        <div class="fact-value" style="font-size:.88rem;">{{ school.accreditation }}</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:2rem; align-items:start;" class="profile-layout">
+
+      <!-- Left column: main content -->
+      <div>
+
+        <!-- Summary -->
+        <section class="section">
+          <h2 class="section-title">Is {{ school.name }} a good fit for my child?</h2>
+          <p style="font-size:1.05rem; color:var(--gray-600);">{{ school.summary }}</p>
+          {% if school.university_pathways %}
+          <div class="info-box" style="margin-top:1rem;">
+            <strong>University pathways:</strong> {{ school.university_pathways }}
+          </div>
+          {% endif %}
+        </section>
+
+        <!-- Pros & cons -->
+        {% if pros or cons %}
+        <section class="section">
+          <h2 class="section-title">What parents say: pros & cons</h2>
+          <div class="pros-cons">
+            {% if pros %}
+            <div class="pros-list">
+              <h4>✓ What parents love</h4>
+              <ul>{% for pro in pros %}<li>{{ pro }}</li>{% endfor %}</ul>
+            </div>
+            {% endif %}
+            {% if cons %}
+            <div class="cons-list">
+              <h4>✗ Common concerns</h4>
+              <ul>{% for con in cons %}<li>{{ con }}</li>{% endfor %}</ul>
+            </div>
+            {% endif %}
+          </div>
+        </section>
+        {% endif %}
+
+        <!-- Facilities -->
+        {% if facilities %}
+        <section class="section">
+          <h2 class="section-title">Facilities & campus</h2>
+          {% if school.address %}
+          <p style="color:var(--gray-600); margin-bottom:.75rem; font-size:.9rem;">📍 {{ school.address }}</p>
+          {% endif %}
+          <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
+            {% for f in facilities %}
+            <span class="badge badge-blue">{{ f }}</span>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+
+        <!-- Admissions -->
+        {% if timeline or documents %}
+        <section class="section">
+          <h2 class="section-title">How competitive is admission?</h2>
+
+          {% if timeline %}
+          <h3 style="font-size:1rem; font-weight:600; margin-bottom:.75rem; color:var(--gray-600);">Admissions timeline</h3>
+          <ul class="timeline" style="margin-bottom:1.5rem;">
+            {% for step in timeline %}
+            {% set parts = step.split(':') %}
+            <li>
+              {% if parts|length > 1 %}
+              <strong>{{ parts[0].strip() }}</strong> {{ parts[1:] | join(':') | trim }}
+              {% else %}
+              {{ step }}
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+
+          {% if documents %}
+          <h3 style="font-size:1rem; font-weight:600; margin-bottom:.75rem; color:var(--gray-600);">Required documents</h3>
+          <ul style="padding-left:1.3rem; color:var(--gray-600); font-size:.9rem;">
+            {% for doc in documents %}<li style="margin-bottom:.4rem;">{{ doc }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+
+          {% if school.website_url %}
+          <div style="margin-top:1.25rem;">
+            <a class="btn btn-outline" href="{{ school.website_url }}" target="_blank" rel="noopener">Visit official admissions page →</a>
+          </div>
+          {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- FAQs -->
+        {% if faqs %}
+        <section class="section">
+          <h2 class="section-title">Frequently asked questions about {{ school.name }}</h2>
+          {% for q, a in faqs %}
+          <div class="faq-item">
+            <details>
+              <summary>{{ q }}</summary>
+              <p>{{ a }}</p>
+            </details>
+          </div>
+          {% endfor %}
+        </section>
+        {% endif %}
+
+      </div>
+
+      <!-- Right column: offers + actions -->
+      <div style="position:sticky; top:80px;">
+
+        <!-- Active offers -->
+        <div class="card" style="margin-bottom:1.25rem;">
+          <div class="card-body">
+            <h3 style="margin-bottom:1rem;">What scholarships or discounts are available now?</h3>
+            {% if offers %}
+              {% for offer in offers %}
+              <div class="offer-card {{ offer.offer_type | lower | replace(' ', '-') }}" style="margin-bottom:.75rem;">
+                <div class="offer-header">
+                  <span class="offer-title" style="font-size:.93rem;">{{ offer.title }}</span>
+                  {% if offer.verification_status == 'School-confirmed' %}
+                    <span class="badge badge-green">✓ Confirmed</span>
+                  {% else %}
+                    <span class="badge badge-blue">◎ Verified</span>
+                  {% endif %}
+                </div>
+                <p class="offer-detail" style="font-size:.85rem;">{{ offer.detail }}</p>
+                <div class="offer-footer">
+                  <span>Deadline: <strong>{{ offer.deadline }}</strong></span>
+                  <a href="{{ offer.source_url }}" target="_blank" rel="noopener" style="margin-left:auto; font-size:.8rem;">Source →</a>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <p style="color:var(--gray-400); font-size:.9rem;">No active offers right now. Check back soon or <a href="/hanoi/promotions/">see all promotions</a>.</p>
+            {% endif %}
+            <a class="btn btn-primary btn-sm" href="/hanoi/promotions/?school_id=" style="width:100%; text-align:center; display:block; margin-top:.75rem;">All promotions →</a>
+          </div>
+        </div>
+
+        <!-- Lead capture -->
+        <div class="card" style="background:var(--navy); color:var(--white);">
+          <div class="card-body">
+            <h3 style="color:var(--white); margin-bottom:.5rem;">Get the free 2026 guide</h3>
+            <p style="font-size:.85rem; opacity:.8; margin-bottom:1rem;">Fees, scholarships & admissions tips for all Hanoi international schools.</p>
+            <a class="btn btn-primary" href="/#lead" style="display:block; text-align:center;">Get free guide</a>
+          </div>
+        </div>
+
+        <!-- Compare -->
+        <div style="margin-top:1.25rem;">
+          <a class="btn btn-outline" href="/hanoi/compare/?schools={{ school.slug }}" style="display:block; text-align:center;">+ Add to comparison</a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Other schools -->
+    {% if other_schools %}
+    <section class="section">
+      <h2 class="section-title">Compare with other schools</h2>
+      <div class="grid grid-3">
+        {% for s in other_schools %}
+        <a href="/hanoi/schools/{{ s.slug }}" style="text-decoration:none; color:inherit;">
+          <article class="card">
+            <img class="card-img" src="{{ s.image_url }}" alt="{{ s.name }}" style="height:130px;" />
+            <div class="card-body">
+              <h3 style="font-size:.95rem;">{{ s.name }}</h3>
+              <div class="card-meta">
+                <span>{{ s.curriculum.split('/')[0].strip() }}</span>
+                <span>{{ s.district }}</span>
+              </div>
+              <p class="card-summary" style="font-size:.83rem;">{{ s.tuition_range }}</p>
+            </div>
+          </article>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+  </div>
+</main>
+
+<style>
+@media (max-width: 768px) {
+  .profile-layout { grid-template-columns: 1fr !important; }
+}
+</style>
+
+{% endblock %}

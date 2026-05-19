@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}International Schools in Hanoi — Full Directory 2026{% endblock %}
+{% block description %}Browse all international schools in Hanoi. Filter by curriculum (IB, British, AP, French), district, and tuition range. Verified school profiles with fees and offers.{% endblock %}
+
+{% block content %}
+<header class="hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <div class="hero-content">
+      <h1>International Schools in Hanoi</h1>
+      <p>{{ schools|length }} schools reviewed. Filter by curriculum, district, or tuition range.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/">Home</a> › <span>School Directory</span>
+    </div>
+
+    <!-- Filters -->
+    <form method="get" action="/hanoi/schools/" class="filters">
+      <div class="filter-group">
+        <label for="district">District</label>
+        <select name="district" id="district">
+          <option value="">All districts</option>
+          {% for d in districts %}
+          <option value="{{ d }}" {% if selected_district == d %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="curriculum">Curriculum</label>
+        <select name="curriculum" id="curriculum">
+          <option value="">All curricula</option>
+          {% for c in curricula %}
+          <option value="{{ c }}" {% if selected_curriculum == c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button class="btn btn-primary btn-sm" type="submit" style="align-self:flex-end;">Filter</button>
+      {% if selected_district or selected_curriculum %}
+      <a class="btn btn-outline btn-sm" href="/hanoi/schools/" style="align-self:flex-end;">Clear</a>
+      {% endif %}
+    </form>
+
+    {% if not schools %}
+    <div class="info-box">No schools match your filters. <a href="/hanoi/schools/">Clear filters</a> to see all schools.</div>
+    {% endif %}
+
+    <div class="grid grid-3" style="margin-bottom:3rem;">
+      {% for school in schools %}
+      <a href="/hanoi/schools/{{ school.slug }}" style="text-decoration:none; color:inherit;">
+        <article class="card">
+          <img class="card-img" src="{{ school.image_url }}" alt="{{ school.name }} campus" />
+          <div class="card-body">
+            <h3>{{ school.name }}</h3>
+            <div class="card-meta">
+              <span>{{ school.district }}</span>
+              <span>Ages {{ school.age_range }}</span>
+              {% if school.accreditation %}<span>{{ school.accreditation.split(',')[0].strip() }}</span>{% endif %}
+            </div>
+            <div class="card-meta" style="margin-top:-.2rem;">
+              <span>{{ school.curriculum }}</span>
+            </div>
+            <p class="card-summary">{{ school.summary }}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:.5rem;">
+              <strong style="color:var(--navy); font-size:.92rem;">{{ school.tuition_range }}</strong>
+              <span class="btn btn-outline btn-sm">View profile →</span>
+            </div>
+          </div>
+        </article>
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- Compare CTA -->
+    <div class="info-box" style="margin-bottom:3rem;">
+      <strong>Comparing multiple schools?</strong> Use the <a href="/hanoi/compare/">side-by-side compare tool</a> to evaluate up to 4 schools at once.
+    </div>
+  </div>
+</main>
+
+{% endblock %}

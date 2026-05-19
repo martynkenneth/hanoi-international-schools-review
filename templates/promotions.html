@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Scholarships & Promotions at Hanoi International Schools 2026{% endblock %}
+{% block description %}All verified scholarships, early-enrolment discounts, and fee waivers at international schools in Hanoi. Deadlines, source links, and verification status.{% endblock %}
+
+{% block content %}
+
+<header class="hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <div class="hero-content">
+      <h1>Scholarships & Promotions — Hanoi 2026</h1>
+      <p>{{ offers|length }} active verified offers. Updated every 6 hours.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="/">Home</a> › <span>Promotions & Scholarships</span>
+    </div>
+
+    <!-- Info -->
+    <div class="info-box" style="margin-bottom:1.5rem;">
+      <strong>How we verify offers:</strong> Offers are classified as <em>School-confirmed</em> (verified directly with the admissions team), <em>Source-verified</em> (confirmed from official school website or social channel), or <em>Self-reported</em> (submitted by schools, awaiting verification). Always confirm final terms directly with the school.
+    </div>
+
+    <!-- Filters -->
+    <form method="get" action="/hanoi/promotions/" class="filters">
+      <div class="filter-group">
+        <label for="offer_type">Offer type</label>
+        <select name="offer_type" id="offer_type">
+          <option value="">All types</option>
+          {% for t in offer_types %}
+          <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="school_id">School</label>
+        <select name="school_id" id="school_id">
+          <option value="">All schools</option>
+          {% for school in schools %}
+          <option value="{{ school.id }}" {% if selected_school == school.id %}selected{% endif %}>{{ school.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button class="btn btn-primary btn-sm" type="submit" style="align-self:flex-end;">Filter</button>
+      {% if selected_type or selected_school %}
+      <a class="btn btn-outline btn-sm" href="/hanoi/promotions/" style="align-self:flex-end;">Clear</a>
+      {% endif %}
+    </form>
+
+    {% if not offers %}
+    <div class="info-box">No offers match your filters. <a href="/hanoi/promotions/">Clear filters</a>.</div>
+    {% endif %}
+
+    <!-- Offer type legend -->
+    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+      <span class="badge badge-blue">◼ Scholarship — partial or full tuition award</span>
+      <span class="badge badge-green">◼ Discount — % or fixed reduction on tuition</span>
+      <span class="badge badge-amber">◼ Fee Waiver — waiver of enrollment or activity fees</span>
+    </div>
+
+    <div class="grid grid-2" style="margin-bottom:3rem;">
+      {% for offer in offers %}
+      {% set school = school_map.get(offer.school_id) %}
+      <article class="offer-card {{ offer.offer_type | lower | replace(' ', '-') }}">
+        <div class="offer-header">
+          <span class="offer-title">{{ offer.title }}</span>
+          {% if offer.verification_status == 'School-confirmed' %}
+            <span class="badge badge-green">✓ School-confirmed</span>
+          {% elif offer.verification_status == 'Source-verified' %}
+            <span class="badge badge-blue">◎ Source-verified</span>
+          {% else %}
+            <span class="badge badge-amber">Self-reported</span>
+          {% endif %}
+        </div>
+        {% if school %}
+        <div class="offer-school">
+          <a href="/hanoi/schools/{{ school.slug }}">{{ school.name }}</a>
+          <span style="margin-left:.4rem; color:var(--gray-400);">· {{ school.district }} · {{ school.curriculum.split('/')[0].strip() }}</span>
+        </div>
+        {% endif %}
+        <p class="offer-detail">{{ offer.detail }}</p>
+        <div class="offer-footer">
+          <span class="badge badge-gray">{{ offer.offer_type }}</span>
+          <span>Deadline: <strong>{{ offer.deadline }}</strong></span>
+          <span style="color:var(--gray-400);">Verified: {{ offer.last_verified_at.strftime('%d %b %Y') }}</span>
+          <a href="{{ offer.source_url }}" target="_blank" rel="noopener" style="margin-left:auto;">Source →</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <!-- Lead CTA -->
+    <div style="background:var(--navy); border-radius:var(--radius); padding:2rem; text-align:center; margin-bottom:3rem; color:var(--white);">
+      <h2 style="color:var(--white); font-size:1.4rem; margin-bottom:.5rem;">Never miss a scholarship deadline</h2>
+      <p style="opacity:.85; margin-bottom:1.25rem;">Get the free 2026 Hanoi Schools Guide with all scholarship deadlines in one place.</p>
+      <a class="btn btn-primary" href="/#lead">Get the free guide</a>
+    </div>
+
+  </div>
+</main>
+
+{% endblock %}

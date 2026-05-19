@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Hanoi International Schools Review — Compare Schools, Find Scholarships{% endblock %}
+{% block description %}Compare international schools in Hanoi and discover verified scholarships, early-enrolment discounts, and fee waivers for 2026. Free guide for expat parents.{% endblock %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Hanoi International Schools Review",
+  "url": "https://hanoischoolsreview.com",
+  "description": "Compare Hanoi international schools and discover verified scholarships and discounts.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "/hanoi/schools/?curriculum={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1>Choose the best international school in Hanoi for your child</h1>
+      <p>Verified scholarships, honest comparisons, and expert guidance — all free for parents.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/hanoi/schools/">Browse all schools</a>
+        <a class="btn btn-secondary" href="/hanoi/promotions/">See active offers</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>5</strong><span>International schools</span></div>
+        <div class="hero-stat"><strong>{{ offers|length }}+</strong><span>Verified offers</span></div>
+        <div class="hero-stat"><strong>Free</strong><span>For parents</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  {% if request.query_params.get('success') %}
+  <div class="container" style="padding-top:1.5rem;">
+    <div class="success-banner">✓ You're on the list! Check your email for the free schools guide.</div>
+  </div>
+  {% endif %}
+
+  <!-- Quick answers -->
+  <section class="section" id="faqs">
+    <div class="container">
+      <h2 class="section-title">Quick answers for parents</h2>
+      <p class="section-subtitle">Common questions from families choosing an international school in Hanoi.</p>
+      {% for q, a in faqs %}
+      <div class="faq-item">
+        <details>
+          <summary>{{ q }}</summary>
+          <p>{{ a }}</p>
+        </details>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- School directory preview -->
+  <section class="section">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:.75rem;">
+        <div>
+          <h2 class="section-title" style="margin-bottom:.25rem;">School directory</h2>
+          <p style="color:var(--gray-600); font-size:.92rem;">{{ schools|length }} international schools reviewed in Hanoi.</p>
+        </div>
+        <a class="btn btn-outline" href="/hanoi/schools/">View all schools →</a>
+      </div>
+      <div class="grid grid-3">
+        {% for school in schools[:3] %}
+        <a href="/hanoi/schools/{{ school.slug }}" style="text-decoration:none; color:inherit;">
+          <article class="card">
+            <img class="card-img" src="{{ school.image_url }}" alt="{{ school.name }} campus" />
+            <div class="card-body">
+              <h3>{{ school.name }}</h3>
+              <div class="card-meta">
+                <span>{{ school.curriculum }}</span>
+                <span>{{ school.district }}</span>
+                <span>{{ school.tuition_range }}</span>
+              </div>
+              <p class="card-summary">{{ school.summary }}</p>
+              <span class="btn btn-outline btn-sm">View profile →</span>
+            </div>
+          </article>
+        </a>
+        {% endfor %}
+      </div>
+      {% if schools|length > 3 %}
+      <div style="text-align:center; margin-top:1.5rem;">
+        <a class="btn btn-outline" href="/hanoi/schools/">See all {{ schools|length }} schools</a>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Active promotions -->
+  <section class="section" id="offers" style="background:var(--gray-100);">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:.75rem;">
+        <div>
+          <h2 class="section-title" style="margin-bottom:.25rem;">Current promotions & scholarships</h2>
+          <p style="color:var(--gray-600); font-size:.92rem;">All offers are verified against school sources. Deadlines updated every 6 hours.</p>
+        </div>
+        <a class="btn btn-outline" href="/hanoi/promotions/">View all offers →</a>
+      </div>
+      <div class="grid grid-2">
+        {% for offer in offers %}
+        {% set school = school_map.get(offer.school_id) %}
+        <article class="offer-card {{ offer.offer_type | lower | replace(' ', '-') }}">
+          <div class="offer-header">
+            <span class="offer-title">{{ offer.title }}</span>
+            {% if offer.verification_status == 'School-confirmed' %}
+              <span class="badge badge-green">✓ School-confirmed</span>
+            {% elif offer.verification_status == 'Source-verified' %}
+              <span class="badge badge-blue">◎ Source-verified</span>
+            {% else %}
+              <span class="badge badge-amber">Self-reported</span>
+            {% endif %}
+          </div>
+          {% if school %}<div class="offer-school">{{ school.name }}</div>{% endif %}
+          <p class="offer-detail">{{ offer.detail }}</p>
+          <div class="offer-footer">
+            <span class="badge badge-gray">{{ offer.offer_type }}</span>
+            <span>Deadline: <strong>{{ offer.deadline }}</strong></span>
+            <a href="{{ offer.source_url }}" target="_blank" rel="noopener" style="margin-left:auto;">Source →</a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Compare CTA -->
+  <section class="section">
+    <div class="container" style="text-align:center; max-width:620px; margin:0 auto;">
+      <h2 class="section-title">Not sure which school is right?</h2>
+      <p style="color:var(--gray-600); margin-bottom:1.5rem;">Use our side-by-side compare tool to evaluate tuition, curriculum, class size, and more across up to 4 schools at once.</p>
+      <a class="btn btn-primary" href="/hanoi/compare/">Compare schools now</a>
+    </div>
+  </section>
+
+  <!-- Lead capture -->
+  <section class="lead-section" id="lead">
+    <div class="container">
+      <h2>Get the free 2026 Hanoi Schools Guide</h2>
+      <p>Fees, scholarships, admissions tips, and deadlines — delivered instantly to your inbox.</p>
+      <form method="post" action="/leads" class="lead-form">
+        <label>Your name <input name="name" placeholder="Jane Smith" required /></label>
+        <label>Email address <input type="email" name="email" placeholder="you@email.com" required /></label>
+        <label>Child's age group
+          <select name="child_age" required>
+            <option value="">Select age</option>
+            <option>2–5 (Early years)</option>
+            <option>6–10 (Primary)</option>
+            <option>11–14 (Middle school)</option>
+            <option>15–18 (Senior)</option>
+          </select>
+        </label>
+        <div>
+          <button class="btn btn-primary" type="submit" style="height:42px; margin-top:1.5rem;">Get free guide</button>
+        </div>
+      </form>
+      <p style="margin-top:1rem; font-size:.8rem; opacity:.65;">No spam. Unsubscribe any time. Your data is never shared with schools.</p>
+    </div>
+  </section>
+
+</main>
+
+{% endblock %}
