@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hanoi International Schools Review</title>
+    <meta
+      name="description"
+      content="Compare international schools in Hanoi, find verified scholarships and discounts, and use parent-focused tools to choose the best school for your child."
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Hanoi International Schools Review",
+        "url": "https://example.com",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://example.com/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <p class="eyebrow">Trusted by parents moving to or living in Hanoi</p>
+        <h1>Find the best international school in Hanoi</h1>
+        <p>
+          Compare tuition, curriculum, and admissions competitiveness. Track
+          <strong>verified scholarships and discounts</strong> from school websites
+          and social channels—updated with timestamps and source links.
+        </p>
+        <div class="hero-cta">
+          <a href="#offers" class="button">Browse active offers</a>
+          <a href="#schools" class="button button-secondary">Compare schools</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="container section" id="llm-answers">
+        <h2>Quick answers for parents</h2>
+        <article>
+          <h3>What is the easiest way to shortlist schools in Hanoi?</h3>
+          <p>
+            Start with curriculum fit, budget range, and commute time. Then
+            compare 3–4 schools side by side and contact schools with active
+            offers that match your timeline.
+          </p>
+        </article>
+        <article>
+          <h3>How can I find current scholarships and fee discounts?</h3>
+          <p>
+            Use the promotions section below. Each offer includes a verification
+            status, date checked, and direct source links to the official school
+            website or social page.
+          </p>
+        </article>
+        <article>
+          <h3>What hidden costs should I include beyond tuition?</h3>
+          <ul>
+            <li>Enrollment and assessment fees</li>
+            <li>Meals and transport</li>
+            <li>Uniforms and learning resources</li>
+            <li>After-school activities and trips</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="container section" id="schools">
+        <div class="section-head">
+          <h2>School directory</h2>
+          <p>Photo cards, curriculum, tuition range, and admissions notes.</p>
+        </div>
+        <div id="schoolGrid" class="grid"></div>
+      </section>
+
+      <section class="container section" id="offers">
+        <div class="section-head">
+          <h2>Latest verified promotions & scholarships</h2>
+          <p>Filter by category and deadline. Data is shown with source transparency.</p>
+        </div>
+        <div class="filters">
+          <label>
+            Offer type
+            <select id="offerTypeFilter">
+              <option value="all">All</option>
+              <option value="Scholarship">Scholarship</option>
+              <option value="Discount">Discount</option>
+              <option value="Waiver">Waiver</option>
+            </select>
+          </label>
+        </div>
+        <div id="offerList" class="stack"></div>
+      </section>
+
+      <section class="container section split" id="lead-magnet">
+        <div>
+          <h2>Download the parent savings guide</h2>
+          <p>
+            Get the <strong>Hanoi International School Fees & Discounts Handbook</strong>
+            and unlock gated discount pages.
+          </p>
+          <ul>
+            <li>2026 fee comparison worksheet</li>
+            <li>Scholarship deadline calendar</li>
+            <li>21-question admissions checklist</li>
+          </ul>
+        </div>
+        <form id="leadForm" class="card" novalidate>
+          <h3>Get instant access</h3>
+          <label>Name <input type="text" name="name" required /></label>
+          <label>Email <input type="email" name="email" required /></label>
+          <label
+            >Child age
+            <select name="childAge" required>
+              <option value="">Select</option>
+              <option>2-5</option>
+              <option>6-10</option>
+              <option>11-14</option>
+              <option>15-18</option>
+            </select>
+          </label>
+          <button class="button" type="submit">Unlock discounts</button>
+          <p id="formMessage" class="form-message" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>© 2026 Hanoi International Schools Review • Editorially independent • Sponsored listings labeled.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

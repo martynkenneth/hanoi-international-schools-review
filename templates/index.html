@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hanoi International Schools Review</title>
+  <meta name="description" content="Compare Hanoi international schools and discover verified scholarships, waivers, and discounts." />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name":"Hanoi International Schools Review",
+    "url":"https://example.com"
+  }
+  </script>
+</head>
+<body>
+<header class="hero"><div class="container"><h1>Choose the best international school in Hanoi</h1><p>Verified offers + school comparison for parents.</p><a class="button" href="#offers">See active offers</a></div></header>
+<main class="container">
+  <section>
+    <h2>Quick answers for parents</h2>
+    {% for q,a in faqs %}
+      <article><h3>{{ q }}</h3><p>{{ a }}</p></article>
+    {% endfor %}
+  </section>
+
+  <section>
+    <h2>School directory</h2>
+    <div class="grid">
+      {% for school in schools %}
+      <article class="card">
+        <img src="{{ school.image_url }}" alt="{{ school.name }} campus photo" />
+        <h3>{{ school.name }}</h3>
+        <ul>
+          <li><strong>Curriculum:</strong> {{ school.curriculum }}</li>
+          <li><strong>Tuition:</strong> {{ school.tuition_range }}</li>
+          <li><strong>District:</strong> {{ school.district }}</li>
+        </ul>
+        <p>{{ school.summary }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="offers">
+    <h2>Current promotions and scholarships</h2>
+    <div class="grid">
+      {% for offer in offers %}
+      <article class="card">
+        <span class="badge">{{ offer.offer_type }}</span>
+        <h3>{{ offer.title }}</h3>
+        <p>{{ offer.detail }}</p>
+        <p><strong>Deadline:</strong> {{ offer.deadline }}</p>
+        <p><strong>Verification:</strong> {{ offer.verification_status }}</p>
+        <p><strong>Last verified:</strong> {{ offer.last_verified_at }}</p>
+        <a href="{{ offer.source_url }}" target="_blank" rel="noopener">Source</a>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="lead">
+    <h2>Get the downloadable ebook + gated discounts</h2>
+    <form method="post" action="/leads" class="card form">
+      <label>Name <input name="name" required /></label>
+      <label>Email <input type="email" name="email" required /></label>
+      <label>Child age
+        <select name="child_age" required><option value="">Select</option><option>2-5</option><option>6-10</option><option>11-14</option><option>15-18</option></select>
+      </label>
+      <button class="button" type="submit">Unlock discount pages</button>
+    </form>
+  </section>
+</main>
+<footer><div class="container">© {{ year }} Hanoi International Schools Review</div></footer>
+</body>
+</html>
